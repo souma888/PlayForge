@@ -1,0 +1,11 @@
+:root {
+  color-scheme: dark;
+  --surface: #090c11;
+  --text: #f0f2f5;
+  --muted: #a9b0bf;
+  --fire: #ff813c;
+  --ice: #93e5ed;
+  --line: #2b303a;
+  --duration-fast: 180ms;
+  --duration-scene: 450ms;
+}
