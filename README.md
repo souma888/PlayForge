@@ -3,8 +3,10 @@
 A browser gaming universe built for ambitious games and expressive, motion-rich UI.
 Action, adventure, RPG, racing, sports, strategy, simulation, social, arcade, puzzle and experimental experiences all belong here.
 
-This is the initial repository foundation: a branded development page, motion provider,
-design tokens, lazy game registry, runtime contracts, tests and CI. Games, accounts,
+The homepage is an interactive Three.js world selector: three original procedural districts,
+orbit/zoom controls, camera flights, a moving racer, animated flags, quality and pause
+controls, accessible district dialogs and browser-local saved worlds. It includes a motion provider,
+lazy game registry, runtime contracts, tests and CI. Games, accounts,
 multiplayer, tournaments and the creator editor are future implementation work.
 
 ## Run locally

@@ -1,11 +1,13 @@
 # Creative direction
 
 Playforge should feel like a place players want to inhabit: cinematic, tactile and intense.
-Use oversized expressive type, deep ink surfaces, ember orange and icy accents, original
-game artwork, asymmetrical composition and strong hierarchy. Give genres and titles their
+The chosen World Select direction uses pale mineral surfaces, black condensed editorial
+type, terracotta accents and an original interactive 3D diorama. The Apex District,
+The Wilds and Command Sector represent the breadth of games. Give genres and titles their
 own identities within a consistent platform shell. Avoid generic card grids, decorative
-statistics and fabricated online-player counts. The initial development page establishes
-tokens and tone; it is not the final lobby design.
+statistics and fabricated online-player counts. The homepage scene uses Three.js procedural
+geometry, drag/zoom controls and animated camera focus. District panels and saved worlds
+work locally; games and the creator workshop remain in development.
 
 ## Motion language
 
