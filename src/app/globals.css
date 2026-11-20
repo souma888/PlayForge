@@ -829,3 +829,117 @@ h1 {
     scroll-behavior: auto !important;
   }
 }
+/* Reference composition: neutral gallery, large continuous landscape, compact black type. */
+:root {
+  --paper: #dcdde0;
+  --ink: #090a0b;
+  --orange: #c2642b;
+}
+.world-stage {
+  height: calc(100svh - 98px);
+  min-height: 720px;
+  max-height: 1200px;
+}
+.scene-wrap {
+  inset: -70px -5% -30px -4%;
+}
+.hero-copy {
+  top: 5px;
+}
+.hero-copy .overline,
+.hero-copy p,
+.hero-footnote,
+.header-note {
+  display: none;
+}
+h1 {
+  font-size: clamp(76px, 8.7vw, 144px);
+  line-height: 0.86;
+  letter-spacing: -1px;
+  margin: 0 0 26px;
+}
+.period {
+  color: var(--ink);
+}
+.hero-copy .primary-button {
+  min-width: 225px;
+}
+.callout-index {
+  display: none;
+}
+.callout-apex {
+  left: 6.5%;
+  top: 42%;
+}
+.callout-wilds {
+  left: 77%;
+  top: 0;
+}
+.callout-command {
+  top: 48%;
+  right: 2%;
+}
+.brand span,
+.soon {
+  display: none;
+}
+.district-strip {
+  background: #dcdde0;
+}
+@media (max-width: 1100px) and (min-width: 701px) {
+  .hero-copy h1 {
+    font-size: 90px;
+  }
+  .scene-wrap {
+    inset: -60px -14% -15px -14%;
+  }
+}
+@media (max-width: 700px) {
+  .world-stage {
+    height: 850px;
+    min-height: 0;
+  }
+  .hero-copy {
+    top: 20px;
+  }
+  .hero-copy h1 {
+    font-size: 72px;
+  }
+  .scene-wrap {
+    inset: 230px -60% 30px -60%;
+  }
+  .callout-apex {
+    top: 62%;
+    left: 5%;
+  }
+  .callout-wilds {
+    top: 34%;
+    left: 68%;
+  }
+  .callout-command {
+    top: 83%;
+    right: 5%;
+  }
+  .world-callout {
+    background: #dcdde0bb;
+    padding: 6px;
+  }
+}
+/* Keep the reference headline on two deliberate lines. */
+@media (min-width: 701px) {
+  h1 {
+    max-width: 800px;
+    font-size: clamp(82px, 7.8vw, 130px);
+  }
+  .callout-apex {
+    top: 39%;
+  }
+  .callout-command {
+    top: 49%;
+  }
+}
+@media (max-width: 700px) {
+  .scene-wrap {
+    inset: 245px -2% 35px -2%;
+  }
+}

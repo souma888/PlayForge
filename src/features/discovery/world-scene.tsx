@@ -2,6 +2,10 @@
 import { useEffect, useRef } from "react";
 import * as T from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { SSAOPass } from "three/addons/postprocessing/SSAOPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { buildWorld } from "./build-world";
 import type { DistrictId } from "./districts";
 
@@ -42,17 +46,18 @@ export default function WorldScene(props: Props) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = T.PCFShadowMap;
     renderer.toneMapping = T.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
+    renderer.toneMappingExposure = 1.05;
     container.appendChild(renderer.domElement);
     renderer.domElement.setAttribute(
       "aria-label",
       "3D world map. Drag to orbit, scroll to zoom. Use the district buttons for keyboard selection.",
     );
     const scene = new T.Scene();
-    scene.fog = new T.Fog("#e8e8e1", 32, 65);
-    const camera = new T.PerspectiveCamera(35, 1, 0.1, 100);
-    const home = new T.Vector3(16, 15, 22),
-      target = new T.Vector3(-1.8, 0.1, 0);
+    scene.background = new T.Color("#dcdde0");
+    scene.fog = new T.Fog("#dcdde0", 42, 70);
+    const camera = new T.PerspectiveCamera(35, 1, 0.5, 85);
+    const home = new T.Vector3(8, 12, 22),
+      target = new T.Vector3(-0.8, 0.7, 0);
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.065;
@@ -64,11 +69,11 @@ export default function WorldScene(props: Props) {
     controls.target.copy(target);
     camera.position.copy(home);
     controls.update();
-    scene.add(new T.HemisphereLight("#f7f3e7", "#75889c", 2.4));
-    const sun = new T.DirectionalLight("#fff0d7", 4);
-    sun.position.set(-10, 18, 8);
+    scene.add(new T.HemisphereLight("#d9e4f3", "#77776e", 1.5));
+    const sun = new T.DirectionalLight("#fff0d8", 2.8);
+    sun.position.set(-12, 22, 12);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.mapSize.set(4096, 4096);
     sun.shadow.camera.left = -16;
     sun.shadow.camera.right = 16;
     sun.shadow.camera.top = 14;
@@ -77,11 +82,34 @@ export default function WorldScene(props: Props) {
     scene.add(sun);
     const world = buildWorld();
     scene.add(world.root);
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const ao = new SSAOPass(scene, camera, 512, 512, 16);
+    ao.kernelRadius = 0.45;
+    ao.minDistance = 0.0003;
+    ao.maxDistance = 0.025;
+    composer.addPass(ao);
+    const output = new OutputPass();
+    composer.addPass(output);
     let frame = 0,
       time = 0,
       previous = 0,
       visible = true,
       dead = false;
+    new T.TextureLoader().load(
+      "/textures/diorama-materials.webp",
+      (atlas) => {
+        if (dead) {
+          atlas.dispose();
+          return;
+        }
+        world.applyMaterialAtlas(atlas);
+      },
+      undefined,
+      () => {
+        /* The authored colors and procedural bump remain a usable fallback. */
+      },
+    );
     let flight: {
       from: T.Vector3;
       to: T.Vector3;
@@ -93,11 +121,11 @@ export default function WorldScene(props: Props) {
       focus(id) {
         const toTarget =
           id === "apex"
-            ? new T.Vector3(-4, 0, 2.5)
+            ? new T.Vector3(-5, 0, 3.5)
             : id === "wilds"
-              ? new T.Vector3(0.4, 2, -3)
+              ? new T.Vector3(0.5, 4, -3.7)
               : id === "command"
-                ? new T.Vector3(4, 0.5, 2.5)
+                ? new T.Vector3(5, 1, 3.2)
                 : target.clone();
         const to = id
           ? toTarget.clone().add(new T.Vector3(10, 10, 14))
@@ -121,7 +149,10 @@ export default function WorldScene(props: Props) {
       const w = container.clientWidth,
         h = container.clientHeight;
       renderer.setSize(w, h);
+      composer.setSize(w, h);
       camera.aspect = w / h;
+      // Fit the complete diorama on narrow screens instead of clipping its districts.
+      camera.zoom = Math.min(1, camera.aspect / 1.35);
       camera.updateProjectionMatrix();
     };
     const observer = new ResizeObserver(resize);
@@ -184,7 +215,10 @@ export default function WorldScene(props: Props) {
         devicePixelRatio,
         latest.current.quality === "high" ? 1.75 : 1,
       );
-      if (renderer.getPixelRatio() !== ratio) renderer.setPixelRatio(ratio);
+      if (renderer.getPixelRatio() !== ratio) {
+        renderer.setPixelRatio(ratio);
+        composer.setPixelRatio(ratio);
+      }
       const shadows = latest.current.quality === "high";
       if (renderer.shadowMap.enabled !== shadows) {
         renderer.shadowMap.enabled = shadows;
@@ -198,7 +232,8 @@ export default function WorldScene(props: Props) {
         });
       }
       controls.update();
-      renderer.render(scene, camera);
+      ao.enabled = shadows;
+      composer.render();
     }
     frame = requestAnimationFrame(animate);
     latest.current.onReady();
@@ -224,6 +259,11 @@ export default function WorldScene(props: Props) {
       });
       geometries.forEach((g) => g.dispose());
       materials.forEach((m) => m.dispose());
+      world.textures.forEach((texture) => texture.dispose());
+      sun.shadow.dispose();
+      ao.dispose();
+      output.dispose();
+      composer.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     };
@@ -232,4 +272,3 @@ export default function WorldScene(props: Props) {
   }, []);
   return <div className="world-canvas" ref={host} />;
 }
-

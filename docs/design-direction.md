@@ -9,6 +9,12 @@ statistics and fabricated online-player counts. The homepage scene uses Three.js
 geometry, drag/zoom controls and animated camera focus. District panels and saved worlds
 work locally; games and the creator workshop remain in development.
 
+The reference calls for detailed miniature architecture and geological surfaces, rather
+than a flat-shaded low-poly toy aesthetic. Preserve the cool neutral background, dark
+blue slate cliffs, terracotta racing district, gray stone architecture and orange banners.
+The current reconstruction uses original procedural geometry and an original material
+atlas; the concept image itself is not the rendered scene or a background substitute.
+
 ## Motion language
 
 - UI feedback: roughly 120–180ms; clear hover, focus, selection and press responses.
